@@ -20,16 +20,16 @@ const asObject = (anecdote) => {
 export const createVote = (id) => {
   return {
     type: "VOTE",
-    data: id
-  }
-}
+    data: id,
+  };
+};
 
 export const newAnecdote = (content) => {
   return {
-    type: 'NEW_ANECDOTE',
-    data: asObject(content)
-  }
-}
+    type: "NEW_ANECDOTE",
+    data: asObject(content),
+  };
+};
 
 const initialState = anecdotesAtStart.map(asObject);
 
@@ -49,11 +49,10 @@ const reducer = (state = initialState, action) => {
       });
     case "NEW_ANECDOTE":
       const body = action.data;
-      return state.concat(body)
+      return state.concat(body);
     default:
-      break;
+      return state;
   }
-  return state;
 };
 
 export default reducer;
