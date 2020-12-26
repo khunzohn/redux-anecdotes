@@ -1,7 +1,8 @@
 import React from "react";
-import { newAnecdote } from "../reducers/anecdoteReducer";
+import { newAnecdote, asObject } from "../reducers/anecdoteReducer";
 import { useDispatch } from "react-redux";
 import { removeMessage, setMessage } from "../reducers/notificationReducer";
+import service from '../services/anecdotes'
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -13,13 +14,20 @@ const AnecdoteForm = () => {
     }, 5000);
   };
 
-  const createAnecdote = (event) => {
+  const createAnecdote = async (event) => {
     event.preventDefault();
     const content = event.target.anecdote.value;
     event.target.anecdote.value = "";
     console.log("new content", content);
-    dispatch(newAnecdote(content));
-    showNoti(`you created ${content}`);
+
+    const created = await service.addAnecdote(asObject(content))
+    console.log('created',created)
+    if(created) {
+      dispatch(newAnecdote(created));
+      showNoti(`you created ${created.content}`);
+    } else {
+      showNoti('Failed to create new anecdote')
+    }
   };
 
   return (
