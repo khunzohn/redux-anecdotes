@@ -1,16 +1,17 @@
 const initialState = "";
 
-export const setMessage = (message) => {
-  return {
-    type: "SET_MESSAGE",
-    data: message,
-  };
-};
-
-export const removeMessage = () => {
-  return {
-    type: "REMOVE_MESSAGE",
-    data: ""
+export const setNotification = (message, timeInSec) => {
+  return async (dispatch) => {
+    dispatch({
+      type: "SET_MESSAGE",
+      data: message,
+    });
+    setTimeout(() => {
+      dispatch({
+        type: "REMOVE_MESSAGE",
+        data: "",
+      });
+    }, timeInSec * 1000);
   };
 };
 

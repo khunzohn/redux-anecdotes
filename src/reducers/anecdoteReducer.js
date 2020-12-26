@@ -1,28 +1,49 @@
-export const asObject = (content) => {
+import service from "../services/anecdotes";
+
+const asObject = (content) => {
   return {
     content,
     votes: 0,
   };
 };
 
-export const initAnecdotes = (results) => {
-  return {
-    type: "INIT_ANECDOTES",
-    data: results,
+export const initAnecdotes = () => {
+  return async (dispatch) => {
+    const results = await service.getAll();
+    dispatch({
+      type: "INIT_ANECDOTES",
+      data: results,
+    });
   };
 };
 
-export const createVote = (id) => {
-  return {
-    type: "VOTE",
-    data: id,
+export const createVote = (anecdote) => {
+  return async (dispatch) => {
+    console.log('updating anecdot', anecdote)
+    const updatedAnecdote = await service.updateAnecdote({
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    });
+
+    console.log('updatedAnecdote', updatedAnecdote)
+    if (updatedAnecdote) {
+      dispatch({
+        type: "VOTE",
+        data: updatedAnecdote,
+      });
+    }
   };
 };
 
-export const newAnecdote = (anecdote) => {
-  return {
-    type: "NEW_ANECDOTE",
-    data: anecdote,
+export const newAnecdote = (content) => {
+  return async (dispatch) => {
+    const createdAnecdote = await service.addAnecdote(asObject(content));
+    if (createdAnecdote) {
+      dispatch({
+        type: "NEW_ANECDOTE",
+        data: createdAnecdote,
+      });
+    }
   };
 };
 
@@ -34,10 +55,10 @@ const reducer = (state = initialState, action) => {
 
   switch (action.type) {
     case "VOTE":
-      const id = action.data;
+      const updatedAnecdote = action.data;
       return state.map((s) => {
-        if (s.id === id) {
-          return { ...s, votes: s.votes + 1 };
+        if (s.id === updatedAnecdote.id) {
+          return updatedAnecdote
         } else {
           return s;
         }
