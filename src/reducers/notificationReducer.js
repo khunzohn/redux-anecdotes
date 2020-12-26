@@ -1,12 +1,16 @@
 const initialState = "";
 
+let timeoutId
+
 export const setNotification = (message, timeInSec) => {
   return async (dispatch) => {
+    
     dispatch({
       type: "SET_MESSAGE",
       data: message,
     });
-    setTimeout(() => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => {
       dispatch({
         type: "REMOVE_MESSAGE",
         data: "",
